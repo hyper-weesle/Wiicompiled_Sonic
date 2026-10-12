@@ -443,13 +443,13 @@ bool RaceModel(CpuContext* ctx, ModelEntry* model) {
     for (const game::RacerDraw& racer : race.racers) {
         // The kart's models are posed either before or after Sonic moves the kart
         // in the frame: either position marks them.
-        const float near = std::min(sonic::length(at - camera.transformPoint(racer.kartPos)),
+        const float distance = std::min(sonic::length(at - camera.transformPoint(racer.kartPos)),
                                     sonic::length(at - camera.transformPoint(racer.gamePos)));
         // Normally the stand-in's driver model is the anchor. If nothing of the
         // stand-in is drawn (the game hid it all), any opaque model near Sonic in
         // this camera's view will do.
         const bool fallback = race.missed[racer.id] > 10;
-        if (near > racer.hideRadius) {
+        if (distance > racer.hideRadius) {
             if (!fallback || !ctx->gpr[7]) continue;
             const float sonicDistance = sonic::length(camera.transformPoint(racer.kartPos));
             if (sonicDistance > 6000.0f || sonic::length(at - camera.transformPoint(racer.kartPos)) > 6000.0f) continue;
@@ -468,7 +468,7 @@ bool RaceModel(CpuContext* ctx, ModelEntry* model) {
                 }
             }
         }
-        if (near <= racer.hideRadius) return model->isBase;
+        if (distance <= racer.hideRadius) return model->isBase;
     }
     return false;
 }
